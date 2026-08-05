@@ -14,7 +14,7 @@ function resolveTargetUrl(requestUrl, cleanHost, env) {
     return urlObj.searchParams.get('link');
   }
 
-  // 2. Check Cloudflare Environment Variables (e.g., env["domain_com"] or env.DEFAULT_TARGET_URL)
+  // 2. Check Cloudflare Environment Variables (e.g., env["mm8kjc_com"] or env.DEFAULT_TARGET_URL)
   const envHostKey = cleanHost.replace(/[^a-zA-Z0-9_]/g, '_');
   if (env && env[envHostKey]) {
     return env[envHostKey];
@@ -68,7 +68,27 @@ export default {
 
     // Dynamic config.js script output
     if (path === '/config.js') {
-      const configJsContent = `/* Dynamic Cloudflare Link Config for Host: ${cleanHost} */\nwindow.REDIRECT_URL = ${JSON.stringify(targetUrl)};`;
+      const configJsContent = `/* Dynamic Cloudflare Link Config for Host: ${cleanHost} */
+window.REDIRECT_URL = ${JSON.stringify(targetUrl)};
+
+(function () {
+    function updateCtaLinks() {
+        var url = window.REDIRECT_URL;
+        if (!url) return;
+        var btn = document.getElementById('ctaBtn');
+        if (btn) btn.href = url;
+        var allCta = document.querySelectorAll('.btn-cta, a[data-cta="true"], .redirect-link');
+        for (var i = 0; i < allCta.length; i++) {
+            allCta[i].href = url;
+        }
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateCtaLinks);
+    } else {
+        updateCtaLinks();
+    }
+    window.addEventListener('load', updateCtaLinks);
+})();`;
       return new Response(configJsContent, {
         headers: {
           'Content-Type': 'application/javascript;charset=UTF-8',

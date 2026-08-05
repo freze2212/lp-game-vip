@@ -39,15 +39,16 @@
     }
 
     function updateCtaLinks(url) {
+        url = url || window.REDIRECT_URL;
         if (!url) return;
         var ctaBtn = document.getElementById('ctaBtn');
         if (ctaBtn) {
             ctaBtn.href = url;
         }
-        var allCta = document.querySelectorAll('.btn-cta, a[data-cta="true"]');
-        allCta.forEach(function (el) {
-            el.href = url;
-        });
+        var allCta = document.querySelectorAll('.btn-cta, a[data-cta="true"], .redirect-link');
+        for (var i = 0; i < allCta.length; i++) {
+            allCta[i].href = url;
+        }
     }
 
     // Try fetching /api/domain-config first (served by CF Worker), then fallback to /domains.json
@@ -72,7 +73,10 @@
             .catch(function () { applyDomainConfig(null); });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        updateCtaLinks(window.REDIRECT_URL);
-    });
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () { updateCtaLinks(); });
+    } else {
+        updateCtaLinks();
+    }
+    window.addEventListener('load', function () { updateCtaLinks(); });
 })();
