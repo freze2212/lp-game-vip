@@ -1,4 +1,4 @@
-/* Config JS - Dynamic Domain Target Link Resolution for Cloudflare & Local Hosting */
+/* Config JS - Dynamic Domain HH Target Link Resolution for Cloudflare & Local Hosting */
 (function () {
     var DEFAULT_REDIRECT_URL = "https://daily.td88v5s.com/?inviteCode=20432384";
     window.REDIRECT_URL = window.REDIRECT_URL || DEFAULT_REDIRECT_URL;
